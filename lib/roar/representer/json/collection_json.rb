@@ -23,11 +23,12 @@ module Roar::Representer::JSON
 
         collection :queries, :extend => Roar::Representer::JSON::HyperlinkRepresenter
         def queries
-          compile_links_for(representable_attrs.collection_representers[:queries].link_configs)
-        end
-        def queries=(v)
+          queries_representers = representable_attrs.collection_representers[:queries]
+          compile_links_for(queries_representers.link_configs) if queries_representers
         end
 
+        def queries=(v)
+        end
 
         def items
           self
@@ -45,9 +46,7 @@ module Roar::Representer::JSON
         def __href
           compile_links_for(representable_attrs.collection_representers[:href].link_configs).first.href
         end
-        
 
-        
         include ClientMethods
       end
     end
@@ -64,7 +63,7 @@ module Roar::Representer::JSON
         mod = representable_attrs.collection_representers[:object_template] = Module.new do
           include Roar::Representer::JSON
           include Roar::Representer::JSON::CollectionJSON::DataMethods
-          
+
           extend PropertyWithRenderNil
 
           module_exec(&block)
@@ -95,7 +94,7 @@ module Roar::Representer::JSON
         mod = representable_attrs.collection_representers[:queries] = Module.new do
           include Roar::Representer::JSON
           include Roar::Representer::Feature::Hypermedia
-          
+
           module_exec(&block)
 
           def to_hash(*)
